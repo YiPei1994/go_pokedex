@@ -1,6 +1,17 @@
 package main
 
-func main() {
+import "github.com/YiPei1994/PokeGo/internal/pokeapi"
 
-	useRepl()
+type config struct {
+	pokeapiClient    pokeapi.Client
+	nextLocationsURL *string
+	prevLocationURL  *string
+}
+
+func main() {
+	cfg := config{
+		pokeapiClient: pokeapi.NewClient(),
+	}
+
+	useRepl(&cfg)
 }

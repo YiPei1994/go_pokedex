@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func useRepl() []string {
+func useRepl(cfg *config) []string {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
@@ -32,7 +32,10 @@ func useRepl() []string {
 			continue
 		}
 
-		command.callback()
+		err := command.callback(cfg)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	}
 
@@ -41,7 +44,7 @@ func useRepl() []string {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 func getComands() map[string]cliCommand {
@@ -51,18 +54,20 @@ func getComands() map[string]cliCommand {
 			description: "Displays a help message",
 			callback:    callbackHelp,
 		},
+		"map": {
+			name:        "map",
+			description: "get list of nearby locations for explore",
+			callback:    callbackMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "get list of prev locations for explore",
+			callback:    callbackMapB,
+		},
 		"exit": {
 			name:        "exit",
 			description: "Exit the Pokedex",
 			callback:    callbackExit,
-		},
-		"map": {
-			name: "getMapLocations",
-			description: "get next 20 map locations for explore",
-			callback: callMapLocations,
-		},
-		"mapb":{
-
 		},
 	}
 }

@@ -1,37 +1,43 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 )
-type LocationAreaResponse struct {
-	Results []struct {
-		Name string `json:"name"`
-		URL  string `json:"url"`
-	} `json:"results"`
+
+func callbackMap(cfg *config) error {
+
+	res, err := cfg.pokeapiClient.ListLocationsAreas(cfg.nextLocationsURL)
+	if err != nil {
+		return err
+	}
+
+	locations := res.Results
+	fmt.Println("Nearby locations:")
+	for _, area := range locations {
+		fmt.Printf("- %v\n", area.Name)
+	}
+	cfg.nextLocationsURL = res.Next
+	cfg.prevLocationURL = res.Previous
+	return nil
 }
 
-func callMapLocations() error {
-	res, err := http.Get("https://pokeapi.co/api/v2/location-area/")
+func callbackMapB(cfg *config) error {
+	if cfg.prevLocationURL == nil {
+
+		return errors.New("you are on page 0")
+	}
+	res, err := cfg.pokeapiClient.ListLocationsAreas(cfg.prevLocationURL)
 	if err != nil {
-	  	return errors.New("something went wrong")
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode > 299 {
-		return fmt.Errorf("response failed with status code: %d", res.StatusCode)
+		return err
 	}
 
-	var data LocationAreaResponse
-	err = json.NewDecoder(res.Body).Decode(&data)
-	if err != nil {
-		return errors.New("something went wrong")
+	locations := res.Results
+	fmt.Println("Nearby locations:")
+	for _, area := range locations {
+		fmt.Printf("- %v\n", area.Name)
 	}
-	for _, location := range data.Results {
-		fmt.Println( location.Name)
-	}
-
+	cfg.prevLocationURL = res.Previous
+	cfg.nextLocationsURL = res.Next
 	return nil
 }
