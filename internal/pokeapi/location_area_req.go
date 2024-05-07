@@ -13,7 +13,18 @@ func (c *Client) ListLocationsAreas(pageURL *string) (LocationAreaResp, error) {
 	if pageURL != nil {
 		fullURL = *pageURL
 	}
-
+ 
+	// check cache
+	dat,ok := c.cache.Get(fullURL)
+	if ok {
+		fmt.Println("found cache")
+		locationAreaResp := LocationAreaResp{}
+		err := json.Unmarshal(dat, &locationAreaResp)
+		if err != nil {
+		return LocationAreaResp{}, err
+		}
+		return locationAreaResp, nil
+	}
 	//requsting
 	req, err := http.NewRequest("GET", fullURL, nil)
 
@@ -36,7 +47,9 @@ func (c *Client) ListLocationsAreas(pageURL *string) (LocationAreaResp, error) {
 	if err != nil {
 		return LocationAreaResp{}, err
 	}
-
+	// cacheing data
+	c.cache.Add(fullURL,data)
+	fmt.Println("new cache")
 	// set data with generated struct, using Unmarshal
 	locationAreaResp := LocationAreaResp{}
 	err = json.Unmarshal(data, &locationAreaResp)
