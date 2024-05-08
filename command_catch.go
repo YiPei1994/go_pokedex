@@ -18,6 +18,9 @@ func  callbackCatch(cfg *config, args ...string) error {
 	if err != nil {
 		fmt.Println(err)
 	}
+	if pokeBall == pokemonName {
+		return errors.New("no pokeball selected")
+	}
 	threshold := 0
 	switch  {
 	case pokeBall == "basic":

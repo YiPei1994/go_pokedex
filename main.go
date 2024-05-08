@@ -11,6 +11,7 @@ type config struct {
 	nextLocationsURL *string
 	prevLocationURL  *string
 	caughtPokemon map[string]pokeapi.PokemonDetail
+	choosedPokemon pokeapi.PokemonDetail
 }
 
 
@@ -19,6 +20,7 @@ func main() {
 	cfg := config{
 		pokeapiClient: pokeapi.NewClient(cacheInterval),
 		caughtPokemon: make(map[string]pokeapi.PokemonDetail),
+		choosedPokemon: pokeapi.PokemonDetail{},
 	}
 
 	useRepl(&cfg)
