@@ -9,7 +9,7 @@ import (
 
 func useRepl(cfg *config) []string {
 	scanner := bufio.NewScanner(os.Stdin)
-
+	fmt.Printf("type %v to learn how to work with program. \n","help")
 	for {
 		fmt.Print(">")
 
@@ -78,6 +78,11 @@ func getComands() map[string]cliCommand {
 			name:        "catch {pokemon_name}",
 			description: "catching a pokemon",
 			callback:    callbackCatch,
+		},
+		"inspect": {
+			name:        "inspect {pokemon_name}",
+			description: "inspect caught pokemon",
+			callback:    callbackInspect,
 		},
 		"pokedex": {
 			name:        "pokedex",
